@@ -3,13 +3,10 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from scipy import sparse
-from sklearn.neighbors import NearestNeighbors
 from sklearn.impute import SimpleImputer
 import missingno as msno
 
 df_books = pd.read_csv("../dataset/processed_books.csv", delimiter=",", usecols = [0,1,2,3,4], dtype={'Year-Of-Publication':object})
-# df_users = pd.read_csv("../dataset/processed_users.csv")
-# df_rating = pd.read_csv("../dataset/processed_rating.csv")
 
 df_books_subset = df_books.head(400)
 
