@@ -4,13 +4,15 @@ import math
 import matplotlib.pyplot as plt
 from scipy import sparse
 from sklearn.impute import SimpleImputer
+from sklearn.neighbors import NearestNeighbors
+from sklearn.feature_extraction import DictVectorizer
 import missingno as msno
+import json
+from transformers import BertTokenizer, BertModel
 
 df_books = pd.read_csv("../dataset/processed_books.csv", delimiter=",", usecols = [0,1,2,3,4], dtype={'Year-Of-Publication':object})
 
-df_books_subset = df_books.head(400)
-
-from transformers import BertTokenizer, BertModel
+df_books_subset = df_books.head(100)
 
 weights = {
     'title': 0.5,
@@ -27,27 +29,31 @@ def extract_features(row):
     author = row['Book-Author']
     publish_year = row['Year-Of-Publication']
     publisher = row['Publisher']
-    
+
     input_text = f"{title} {author} {publish_year} {publisher}"
     inputs = tokenizer.encode_plus(input_text, add_special_tokens=True, padding='max_length', max_length=128, return_tensors='pt')
-    
+
     outputs = model(**inputs)
+
     hidden_state = outputs.last_hidden_state[:, 0, :].squeeze().detach().numpy()
-    
-    features = {
-        'title': hidden_state * weights['title'],
-        'author': hidden_state * weights['author'],
-        'publish_year': hidden_state * weights['publish_year'],
-        'publisher': hidden_state * weights['publisher']
-    }
-    return features
+    return hidden_state
 
-df_books_subset['features'] = df_books_subset.apply(extract_features, axis=1)
+book_features = np.zeros((len(df_books_subset), 768)) 
 
-import os
-folder_path = os.path.dirname(os.getcwd())
-file_path = os.path.join(folder_path, 'features.csv')
+for i, row in df_books_subset.iterrows():
+    book_features[i] = extract_features(row)
 
-df_books_subset.to_csv(file_path, index=False)
+knn_model = NearestNeighbors(n_neighbors=10, metric='cosine')
+knn_model.fit(book_features)
+
+sample_book = {'Book-Title': 'Slumdog Millionaire', 'Book-Author': 'Vikas Swarup', 'Year-Of-Publication': '2008', 'Publisher': 'HarperCollins'}
+sample_features = extract_features(sample_book)
+
+distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
+
+print("distance" + str(distances))
+print("indices" + str(indices))
+
+
 
 
