@@ -39,7 +39,3 @@ distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
 
 print("distance" + str(distances))
 print("indices" + str(indices))
-
-
-
-
