@@ -20,5 +20,6 @@ df['tags'] = df.apply(process_tags, axis=1)
 
 df['tags'] = df['tags'].apply(lambda x: re.sub(r';+', ';', str(x)) if isinstance(x, str) else x)
 df['tags'] = df['tags'].apply(lambda x: re.sub(r';$', '', str(x)) if isinstance(x, str) else x)
+df['tags'] = df['tags'].apply(lambda x: x.lstrip(';') if isinstance(x, str) else x)
 
 df.to_csv('../dataset/processed_dataset/books.csv', index=False)
