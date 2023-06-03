@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('../new_dataset/processed_crawled_books.csv')
+df = pd.read_csv('../dataset/processed_dataset/books.csv')
 
 genres_list = []
 

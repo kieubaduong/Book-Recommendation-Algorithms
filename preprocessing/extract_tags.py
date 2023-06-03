@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('../new_dataset/processed_crawled_books.csv')
+df = pd.read_csv('../dataset/processed_dataset/books.csv')
 
 tags_array = np.concatenate(df['tags'].str.split(';').values)
 
