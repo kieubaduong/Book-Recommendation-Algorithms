@@ -2,8 +2,6 @@ import pandas as pd
 import re
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
 
 df = pd.read_csv('../dataset/processed_dataset/books.csv')
 
@@ -24,9 +22,9 @@ df['tags'] = df['tags'].apply(lambda x: x.lstrip(';') if isinstance(x, str) else
 df = df.dropna(subset=['tags'])
 
 def extract_unique_tags(tags):
-    tag_list = tags.split(';')
+    tag_list = tags.split(', ')
     unique_tags = set(tag_list)
-    return ', '.join(unique_tags)
+    return ';'.join(unique_tags)
 
 df['tags'] = df['tags'].apply(extract_unique_tags)
 
