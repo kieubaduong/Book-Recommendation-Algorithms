@@ -4,25 +4,31 @@ from sklearn.neighbors import NearestNeighbors
 from transformers import BertTokenizer, BertModel
 from sklearn.decomposition import PCA
 
-df_books = pd.read_csv("../dataset/processed_dataset/books.csv", delimiter=",", usecols = [0,1,2,3,4], dtype={'Year-Of-Publication':object})
+df_books = pd.read_csv("../../dataset/processed_dataset/books.csv")
 
 df_books_subset = df_books.head(10)
 
 weights = {
-    'title': 0.5,
-    'author': 0.3,
-    'publish_year': 0.2,
-    'publisher': 0.1
+    'title': 1.0,
+    'author': 0.8,
+    'year': 0.5,
+    'publisher': 0.7,
+    'tags' : 0.8,
+    'description' : 0.9,
+    'genres' : 0.6,
 }
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
 def extract_features(row):
-    title = row['Book-Title']
-    author = row['Book-Author']
-    publish_year = row['Year-Of-Publication']
-    publisher = row['Publisher']
+    title = row['title']
+    author = row['author']
+    year = str(row['year'])
+    publisher = row['publisher']
+    tags = row['tags']
+    description = row['description']
+    genres = row['genres']
 
     title_inputs = tokenizer(title, padding=True, truncation=True, max_length=128, return_tensors='pt')
     title_outputs = model(**title_inputs)
@@ -32,7 +38,7 @@ def extract_features(row):
     author_outputs = model(**author_inputs)
     author_features = author_outputs['pooler_output'].detach().numpy().squeeze()
 
-    year_inputs = tokenizer(publish_year, padding=True, truncation=True, max_length=128, return_tensors='pt')
+    year_inputs = tokenizer(year, padding=True, truncation=True, max_length=128, return_tensors='pt')
     year_outputs = model(**year_inputs)
     year_features = year_outputs['pooler_output'].detach().numpy().squeeze()
 
@@ -40,16 +46,31 @@ def extract_features(row):
     publisher_outputs = model(**publisher_inputs)
     publisher_features = publisher_outputs['pooler_output'].detach().numpy().squeeze()
     
+    tags_inputs = tokenizer(tags, padding=True, truncation=True, max_length=128, return_tensors='pt')
+    tags_outputs = model(**tags_inputs)
+    tags_features = tags_outputs['pooler_output'].detach().numpy().squeeze()
+
+    description_inputs = tokenizer(description, padding=True, truncation=True, max_length=128, return_tensors='pt')
+    description_outputs = model(**description_inputs)
+    description_features = description_outputs['pooler_output'].detach().numpy().squeeze()
+
+    genres_inputs = tokenizer(genres, padding=True, truncation=True, max_length=128, return_tensors='pt')
+    genres_outputs = model(**genres_inputs)
+    genres_features = genres_outputs['pooler_output'].detach().numpy().squeeze()
+    
     title_features *= weights['title']
     author_features *= weights['author']
-    year_features *= weights['publish_year']
+    year_features *= weights['year']
     publisher_features *= weights['publisher']
+    tags_features *= weights['tags']
+    description_features *= weights['description']
+    genres_features *= weights['genres']
 
-    combined_features = np.concatenate((title_features, author_features, year_features, publisher_features))
+    combined_features = np.concatenate((title_features, author_features, year_features, publisher_features, tags_features, description_features, genres_features))
     return combined_features
 
 
-book_features = np.zeros((len(df_books_subset), 768*4)) 
+book_features = np.zeros((len(df_books_subset), 768*7)) 
 
 for i, row in df_books_subset.iterrows():
     book_features[i] = extract_features(row)
@@ -60,7 +81,7 @@ reduced_features = pca.fit_transform(book_features)
 knn_model = NearestNeighbors(n_neighbors=10, metric='cosine')
 knn_model.fit(book_features)
 
-sample_book = {'Book-Title': 'Slumdog Millionaire', 'Book-Author': 'Vikas Swarup', 'Year-Of-Publication': '2008', 'Publisher': 'HarperCollins'}
+sample_book = {'title': 'Slumdog Millionaire', 'author': 'Vikas Swarup', 'year': '2008', 'publisher': 'HarperCollins', 'tags': 'India', 'description': 'The story of a nobody who became a somebody.', 'genres': 'Fiction'}
 sample_features = extract_features(sample_book)
 
 distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
