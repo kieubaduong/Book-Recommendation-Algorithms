@@ -4,7 +4,7 @@ from sklearn.neighbors import NearestNeighbors
 from transformers import BertTokenizer, BertModel
 from sklearn.decomposition import PCA
 
-df_books = pd.read_csv("../dataset/processed_books.csv", delimiter=",", usecols = [0,1,2,3,4], dtype={'Year-Of-Publication':object})
+df_books = pd.read_csv("../dataset/processed_dataset/books.csv", delimiter=",", usecols = [0,1,2,3,4], dtype={'Year-Of-Publication':object})
 
 df_books_subset = df_books.head(10)
 
