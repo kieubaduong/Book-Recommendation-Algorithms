@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-df = pd.read_csv('../dataset/crawled_dataset/books.csv')
+df = pd.read_csv('../dataset/processed_dataset/books.csv')
 
 def process_description(description):
     description = re.sub(r'[^a-zA-Z0-9\s]', '', description)
