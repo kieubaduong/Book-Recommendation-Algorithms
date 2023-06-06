@@ -3,7 +3,7 @@ import re
 import nltk
 from nltk.corpus import stopwords
 
-df = pd.read_csv('../dataset/processed_dataset/books.csv')
+df = pd.read_csv('../../dataset/processed_dataset/books.csv')
 
 stop_words = set(nltk.corpus.stopwords.words('english'))
 
@@ -28,6 +28,6 @@ def extract_unique_tags(tags):
 
 df['tags'] = df['tags'].apply(extract_unique_tags)
 
-df.to_csv('../dataset/processed_dataset/books.csv', index=False)
+df.to_csv('../../dataset/processed_dataset/books.csv', index=False)
 
 # df['tags'].to_csv('tags.csv', index=False)
