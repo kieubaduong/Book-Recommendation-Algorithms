@@ -30,8 +30,6 @@ def extract_features(row):
 
     hidden_state = outputs.last_hidden_state[:, 0, :].squeeze().detach().numpy()
     return hidden_state
-    
-
 
 book_features = np.zeros((len(df_books_subset), 768))
 
