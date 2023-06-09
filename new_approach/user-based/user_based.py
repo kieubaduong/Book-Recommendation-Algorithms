@@ -90,13 +90,24 @@ nearest_users = df_user.loc[indices]
 
 recommended_books = []
 
-for user_id in nearest_users:
-    user_ratings = df_rating[(df_rating['user-id'] == user_id) & (df_rating['isbn'].isin(nearest_users))]
-    liked_books = user_ratings[user_ratings['book-rating'] >= 3]['isbn'].tolist()
-    unread_books = [book for book in liked_books if book not in nearest_users]
-    recommended_books.extend(unread_books)
+for _, user_row in nearest_users.iterrows():
+    user_id = user_row['user-id']
+    user_ratings = df_rating[(df_rating['user-id'] == user_id) & (df_rating['book-rating'] >= 3)]
+    liked_books = user_ratings['isbn'].tolist()
+    recommended_books.extend(liked_books)
     if len(recommended_books) >= 10:
         break
 
-for book in recommended_books:
-    print(book)
+for book_id in recommended_books:
+    book_info = df_book[df_book['isbn'] == book_id]
+    if not book_info.empty:
+        title = book_info['title'].values[0]
+        author = book_info['author'].values[0]
+        print(f"Book: {title} - Author: {author}")
+
+
+
+
+
+
+
