@@ -62,13 +62,8 @@ def extract_user_features(user_id):
 user_features = []
 user_ids = df_user['user-id'].tolist()
 
-# Trích xuất đặc trưng cho từng người dùng và lưu vào user_features
-for user_id in user_ids:
-    features = extract_user_features(user_id)
-    user_features.append(features)
-
-# Chuyển user_features thành một ma trận numpy
-user_features_array = np.array(user_features)
+user_features = df_user['user-id'].apply(extract_user_features)
+user_features_array = np.array(user_features.tolist())
 
 # Sử dụng knn để gom nhóm người dùng
 n_neighbors = 10
