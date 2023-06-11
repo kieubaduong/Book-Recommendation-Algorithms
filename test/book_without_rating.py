@@ -6,7 +6,6 @@ df_book = pd.read_csv('../dataset/processed_dataset/books.csv')
 df_user = pd.read_csv('../dataset/processed_dataset/users.csv')
 
 
-
 # Kết hợp DataFrame df_book và df_rating dựa trên cột 'isbn'
 merged_df = df_book.merge(df_rating, on='isbn', how='left')
 
@@ -20,4 +19,4 @@ is_not_rated = df_book['isbn'].isin(books_without_rating['isbn'])
 df_book_rated = df_book[~is_not_rated]
 
 # Hiển thị DataFrame df_book sau khi loại bỏ các quyển sách không được rating
-df_book_rated.to_csv('../dataset/processed_dataset/books.csv', index=False)
+# df_book_rated.to_csv('../dataset/processed_dataset/books.csv', index=False)
