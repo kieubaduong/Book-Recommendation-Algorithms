@@ -60,27 +60,20 @@ def extract_user_features(user_id):
         return user_features
 
 user_features = []
-user_ids = df_user['user-id'].tolist()
 
 user_features = df_user['user-id'].apply(extract_user_features)
 user_features_array = np.array(user_features.tolist())
 
-# Sử dụng knn để gom nhóm người dùng
-n_neighbors = 10
-knn = NearestNeighbors(n_neighbors=n_neighbors, metric='cosine')
+neighbors = 10
+knn = NearestNeighbors(n_neighbors=neighbors, metric='cosine')
 knn.fit(user_features_array)
 
-# Lấy vector đặc trưng của người dùng đang xét
 user_id = 276847
 target_user_features = extract_user_features(user_id)
 
-# Tìm 10 người dùng gần nhất với người dùng đang xét
-distances, indices = knn.kneighbors(target_user_features.reshape(1, -1), n_neighbors=n_neighbors+1)
+distances, indices = knn.kneighbors(target_user_features.reshape(1, -1), n_neighbors=neighbors+1)
 
-# Loại bỏ chính người dùng đang xét ra khỏi danh sách
 indices = indices.flatten()[1:]
-
-# Lấy thông tin về người dùng gần nhất
 nearest_users = df_user.loc[indices]
 
 recommended_books = []
