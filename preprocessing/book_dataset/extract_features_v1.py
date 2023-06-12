@@ -9,7 +9,6 @@ df_user = pd.read_csv('../../dataset/processed_dataset/users.csv')
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
-default_features = np.zeros((768,))
 
 def extract_features(book_info):
     try:
@@ -52,8 +51,6 @@ for _, book_info in df_book.iterrows():
                 writer.writerow([isbn, features])
         else:
             error_isbns.append(isbn)
-
-
 
 error_isbn_df = pd.DataFrame({'isbn': error_isbns})
 error_isbn_df.to_csv("../../dataset/error_isbns.csv", index=False)

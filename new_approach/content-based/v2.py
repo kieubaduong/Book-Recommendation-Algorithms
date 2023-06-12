@@ -75,8 +75,8 @@ book_features = np.zeros((len(df_books_subset), 768*7))
 for i, row in df_books_subset.iterrows():
     book_features[i] = extract_features(row)
     
-pca = PCA(n_components=2)
-reduced_features = pca.fit_transform(book_features)
+# pca = PCA(n_components=2)
+# reduced_features = pca.fit_transform(book_features)
 
 knn_model = NearestNeighbors(n_neighbors=10, metric='cosine')
 knn_model.fit(book_features)
