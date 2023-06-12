@@ -2,52 +2,52 @@ import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from transformers import BertTokenizer, BertModel
+import csv
+import os
 
 df_books = pd.read_csv("../../dataset/processed_dataset/books.csv")
-
-df_books_subset = df_books.head(100)
+df_book_features = pd.read_csv("../../dataset/book_features.csv")
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
-def extract_features(row):
-    title = row['title']
-    author = row['author']
-    publish_year = row['year']
-    publisher = row['publisher']
-    tags = row['tags']
-    description = row['description']
-    genres = row['genres']
-    max_length = 512 - len(title) - len(author) - 4 - len(publisher)
-    tags = tags[:max_length]
-    description = description[:max_length]
-    genres = genres[:max_length]
+book_features = np.zeros((len(df_books), 768))
 
-    input_text = f"{title} {author} {publish_year} {publisher} {tags} {description} {genres}"
-    inputs = tokenizer.encode_plus(input_text, add_special_tokens=True, padding='max_length', max_length=512, return_tensors='pt')
+for i, row in df_books.iterrows():
+    isbn = row['isbn']
+    book_feature = np.fromstring(df_book_features[df_book_features['isbn'] == isbn]['feature'].values[0][1:-1], sep=' ')
+    book_features[i] = book_feature
 
-    outputs = model(**inputs)
 
-    hidden_state = outputs.last_hidden_state[:, 0, :].squeeze().detach().numpy()
-    return hidden_state
-
-book_features = np.zeros((len(df_books_subset), 768))
-
-for i, row in df_books_subset.iterrows():
-    book_features[i] = extract_features(row)
-
-knn_model = NearestNeighbors(n_neighbors=10, metric='cosine')
+knn_model = NearestNeighbors(n_neighbors=11, metric='cosine')
 knn_model.fit(book_features)
 
-sample_book = {'title': 'Slumdog Millionaire', 'author': 'Vikas Swarup', 'year': '2008', 'publisher': 'HarperCollins', 'tags': 'India', 'description': 'The story of a nobody who became a somebody.', 'genres': 'Fiction'}
-sample_features = extract_features(sample_book)
+result_file_path = "../../dataset/result.csv"
 
-print(sample_features.shape)
+csv_exists = os.path.isfile(result_file_path)
+existing_isbns = []
 
-distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))   
+if csv_exists:
+    with open(result_file_path, 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        next(reader) 
+        for row in reader:
+            existing_isbns.append(row[0]) 
 
-print("distance" + str(distances))
+with open(result_file_path, 'a', newline='') as file:
+    writer = csv.writer(file, delimiter=';')
 
-for index in indices:
-    book_info = df_books_subset.iloc[index]
-    print(book_info)
+    if not csv_exists:
+        writer.writerow(['isbn', 'top-10'])
+
+    for isbn in df_books['isbn']:
+        if csv_exists and isbn in existing_isbns:
+            continue
+
+        sample_features = df_book_features[df_book_features['isbn'] == isbn]['feature'].values[0]
+        sample_features = np.fromstring(sample_features[1:-1], sep=' ')
+        distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
+        top_10_isbns = ';'.join(df_books.iloc[indices[0][1:11]]['isbn'])
+        writer.writerow([isbn, top_10_isbns])
+
+print("Đã lưu kết quả tìm kiếm vào file result.csv")
