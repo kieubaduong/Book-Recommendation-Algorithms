@@ -1,9 +1,9 @@
 import pandas as pd
 
-df_books = pd.read_csv('../../dataset/crawled_dataset/books.csv')
+df_books = pd.read_csv('../../dataset/processed_dataset/books.csv')
 
 # Đọc dataset rating vào dataframe
-df_ratings = pd.read_csv('../../dataset/raw_dataset/Ratings.csv')
+df_ratings = pd.read_csv('../../dataset/processed_dataset/ratings.csv')
 
 # Ghép hai dataframe dựa trên cột 'book-id'
 df_merged = pd.merge(df_books, df_ratings, on='isbn', how='inner')

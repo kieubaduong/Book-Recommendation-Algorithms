@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 
 df_books = pd.read_csv("../../dataset/processed_dataset/books.csv")
 
-df_books_subset = df_books.head(10)
+df_books_subset = df_books.head(11)
 
 weights = {
     'title': 1.0,
@@ -21,7 +21,8 @@ weights = {
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
-def extract_features(row):
+def extract_features(isbn):
+    row = df_books[df_books['isbn'] == isbn].iloc[0]
     title = row['title']
     author = row['author']
     year = str(row['year'])
@@ -73,21 +74,19 @@ def extract_features(row):
 book_features = np.zeros((len(df_books_subset), 768*7)) 
 
 for i, row in df_books_subset.iterrows():
-    book_features[i] = extract_features(row)
-    
+    isbn = row['isbn']
+    book_features[i] = extract_features(isbn)
+
 # pca = PCA(n_components=2)
 # reduced_features = pca.fit_transform(book_features)
 
-knn_model = NearestNeighbors(n_neighbors=10, metric='cosine')
+knn_model = NearestNeighbors(n_neighbors=11, metric='cosine')
 knn_model.fit(book_features)
 
-sample_book = {'title': 'Slumdog Millionaire', 'author': 'Vikas Swarup', 'year': '2008', 'publisher': 'HarperCollins', 'tags': 'India', 'description': 'The story of a nobody who became a somebody.', 'genres': 'Fiction'}
-sample_features = extract_features(sample_book)
+sample_features = extract_features('0192126040')
 
 distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
 
-print("distance" + str(distances))
-
-for index in indices:
+for index in indices[0][1:]:
     book_info = df_books_subset.iloc[index]
-    print(book_info)
+    print(book_info['isbn'])
