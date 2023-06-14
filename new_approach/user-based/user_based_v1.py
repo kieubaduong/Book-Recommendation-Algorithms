@@ -1,12 +1,16 @@
 import numpy as np
 import pandas as pd
+# !pip install transformers
 from transformers import BertTokenizer, BertModel
 from sklearn.neighbors import NearestNeighbors
+import ast
+import json
 
 
-df_rating = pd.read_csv('../../dataset/processed_dataset/ratings.csv')
-df_book = pd.read_csv('../../dataset/processed_dataset/books.csv')
-df_user = pd.read_csv('../../dataset/processed_dataset/users.csv')
+df_rating = pd.read_csv("/content/drive/MyDrive/Dataset/processed/ratings.csv")
+df_book = pd.read_csv("/content/drive/MyDrive/Dataset/processed/books.csv")
+df_user = pd.read_csv("/content/drive/MyDrive/Dataset/processed/users.csv")
+book_features_v1 = pd.read_csv("/content/drive/MyDrive/Dataset/featured/book_features_v1.csv")
     
 df_user = df_user.head(11)
 
@@ -15,27 +19,12 @@ model = BertModel.from_pretrained('bert-base-uncased')
 default_features = np.zeros((768,))
 
 def extract_features(book_info, rating):
-        title = book_info['title'].values[0]
-        author = book_info['author'].values[0]
-        publish_year = book_info['year'].values[0]
-        publisher = book_info['publisher'].values[0]
-        tags = book_info['tags'].values[0]
-        description = book_info['description'].values[0]
-        genres = book_info['genres'].values[0]
-
-        max_length = 512 - len(title) - len(author) - 4 - len(publisher)
-        tags = tags[:max_length]
-        description = description[:max_length]
-        genres = genres[:max_length]
-
-        input_text = f"{title} {author} {publish_year} {publisher} {tags} {description} {genres}"
-        inputs = tokenizer.encode_plus(input_text, add_special_tokens=True, padding='max_length', max_length=512, return_tensors='pt')
-
-        outputs = model(**inputs)
-
-        hidden_state = outputs.last_hidden_state[:, 0, :].squeeze().detach().numpy()
-        weighted_features = hidden_state * (rating - 3)
-        return weighted_features
+    isbn = book_info['isbn'].values[0]
+    features = book_features_v1[book_features_v1['isbn'] == isbn]['feature'].values[0]
+    features = features.replace('[', '').replace(']', '')
+    features = np.array(features.split(), dtype=float)
+    weighted_features = features * (rating - 3)
+    return weighted_features
 
 def extract_user_features(user_id):
     user_ratings = df_rating[df_rating['user-id'] == user_id]
@@ -82,7 +71,12 @@ for _, user_row in nearest_users.iterrows():
     user_id = user_row['user-id']
     user_ratings = df_rating[(df_rating['user-id'] == user_id) & (df_rating['book-rating'] >= 3)]
     liked_books = user_ratings['isbn'].tolist()
-    recommended_books.extend(liked_books)
+    remaining_space = 10 - len(recommended_books)
+    if remaining_space > 0:
+        if len(liked_books) > remaining_space:
+            recommended_books.extend(liked_books[:remaining_space])
+        else:
+            recommended_books.extend(liked_books)
     if len(recommended_books) >= 10:
         break
 
@@ -92,10 +86,3 @@ for book_id in recommended_books:
         title = book_info['title'].values[0]
         author = book_info['author'].values[0]
         print(f"Book: {title} - Author: {author}")
-
-
-
-
-
-
-
