@@ -12,8 +12,6 @@ df_rating = pd.read_csv("/content/drive/MyDrive/Dataset/processed/ratings.csv")
 df_book = pd.read_csv("/content/drive/MyDrive/Dataset/processed/books.csv")
 df_user = pd.read_csv("/content/drive/MyDrive/Dataset/processed/users.csv")
 book_features_v2 = pd.read_csv("/content/drive/MyDrive/Dataset/featured/book_features_v2.csv")
-    
-# df_user = df_user.head(11)
 
 def convert_to_vector(x):
     x = x.strip().rstrip("\\n")
@@ -77,6 +75,6 @@ with open(output_path, 'a', newline='') as csvfile:
         if user_id in existing_users:
             continue
         user_features = extract_user_features(user_id)
-        writer.writerow([user_id] + user_features.tolist())
+        writer.writerow([user_id, user_features])
 
 print(f"User features extracted and saved to {output_path}.")
