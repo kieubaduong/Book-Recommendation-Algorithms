@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_distances
+import csv
+import os
 
-books = pd.read_csv('../../dataset/processed_dataset/books.csv')
-ratings = pd.read_csv('../../dataset/processed_dataset/ratings.csv')
+books = pd.read_csv("/content/drive/MyDrive/Dataset/processed/books.csv")
+ratings = pd.read_csv("/content/drive/MyDrive/Dataset/processed/ratings.csv")
 
 # Trích xuất đặc trưng của tất cả quyển sách
 def extract_book_features(books, ratings):
@@ -34,8 +36,26 @@ def item_based_recommendation(book_id, book_features, top_n=10):
 
     return top_books
 
-book_id = '0393037355'  # Book ID của quyển sách đang xét
+def save_recommendations_to_csv(df_books, book_features, output_path):
+    exist_books = []
+    if os.path.isfile(output_path):
+        exist_df = pd.read_csv(output_path)
+        exist_books = exist_df['isbn'].tolist()
+
+    with open(output_path, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        if not exist_books:
+            writer.writerow(['isbn', 'top-10'])
+        for _, book_row in df_books.iterrows():
+            book_id = book_row['isbn']
+            if book_id in exist_books:
+                continue
+            top_books = item_based_recommendation(book_id, book_features, top_n=10)
+            top_isbns = ';'.join(top_books['isbn'])
+            writer.writerow([book_id, top_isbns])
+
 
 book_features = extract_book_features(books, ratings)
-top_books = item_based_recommendation(book_id, book_features, top_n=10)
-print(top_books)
+output_path = "/content/drive/MyDrive/Dataset/featured/item_based.csv"
+save_recommendations_to_csv(books, book_features, output_path)
+print(f"Finished writing recommendations to {output_path}.")
