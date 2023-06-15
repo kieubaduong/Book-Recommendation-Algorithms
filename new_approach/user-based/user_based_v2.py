@@ -1,10 +1,6 @@
 import numpy as np
 import pandas as pd
-# !pip install transformers
-from transformers import BertTokenizer, BertModel
 from sklearn.neighbors import NearestNeighbors
-import ast
-import json
 
 
 df_rating = pd.read_csv("/content/drive/MyDrive/Dataset/processed/ratings.csv")
