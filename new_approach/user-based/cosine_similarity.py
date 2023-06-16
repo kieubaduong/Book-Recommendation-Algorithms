@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import normalize
 
 # Đọc dữ liệu từ file user_features_v2.csv
 df_user_features = pd.read_csv("/content/drive/MyDrive/Dataset/featured/user_features_v2.csv")
+df_rating = pd.read_csv("/content/drive/MyDrive/Dataset/processed/ratings.csv")
+df_book = pd.read_csv("/content/drive/MyDrive/Dataset/processed/books.csv")
 
 df_user_features = df_user_features.drop_duplicates(subset='feature', keep='first')
 user_features = np.array([np.fromstring(features[1:-1], dtype=float, sep=' ') for features in df_user_features['feature']])
@@ -17,13 +19,33 @@ normalized_user_features = normalize(user_features)
 input_vector = np.array([1.0, 2.0, 3.0])  # Vector đặc trưng của user input
 normalized_input_vector = normalize(input_vector.reshape(1, -1))
 
-# Tìm k nearest neighbors sử dụng cosine similarity
-k = 10
-nn = NearestNeighbors(n_neighbors=k, metric='cosine')
-nn.fit(normalized_user_features)
-distances, indices = nn.kneighbors(normalized_input_vector)
+# Tính cosine similarity giữa user input và các users
+cosine_similarities = cosine_similarity(normalized_input_vector, normalized_user_features)
 
-# In ra các user gần nhất với user input
-nearest_users = user_ids[indices[0]]
+# Sắp xếp các users theo độ tương đồng giảm dần
+sorted_indices = np.argsort(cosine_similarities)[0][::-1]
+nearest_users = user_ids[sorted_indices]
+
+recommended_books = []
+book_seen = set()
+
 for user_id in nearest_users:
-    print(user_id)
+    user_ratings = df_rating.loc[(df_rating['user-id'] == user_id) & (~df_rating['isbn'].isin(book_seen)), 'isbn']
+    liked_books = user_ratings.tolist()
+    remaining_space = 10 - len(recommended_books)
+    
+    for book_id in liked_books:
+        if book_id not in book_seen and len(recommended_books) < 10:
+            recommended_books.append(book_id)
+            book_seen.add(book_id)
+    
+    if len(recommended_books) >= 10:
+        break
+
+for book_id in recommended_books:
+    book_info = df_book[df_book['isbn'] == book_id]
+    if not book_info.empty:
+        title = book_info['title'].values[0]
+        author = book_info['author'].values[0]
+        isbn = book_info['isbn'].values[0]
+        print(f"Book: {title} - Author: {author} - ISBN: {isbn}")
