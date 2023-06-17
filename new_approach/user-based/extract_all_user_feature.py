@@ -55,7 +55,7 @@ column_names = ['user-id', 'feature']
 if os.path.isfile(output_path):
     with open(output_path, 'r') as csvfile:
         reader = csv.reader(csvfile)
-        next(reader)  # Bỏ qua dòng tiêu đề
+        next(reader) 
         for row in reader:
             user_id = row[0]
             existing_users.add(int(user_id))
