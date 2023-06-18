@@ -8,8 +8,6 @@ from sklearn.preprocessing import normalize
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-
-
 def extract_user_features(ratings):
     def convert_to_vector(x):
         x = x.strip().rstrip("\\n")
@@ -80,10 +78,10 @@ if __name__ == "__main__":
         print("Missing input data")
         sys.exit(1)
 
-    book_features_v2 = pd.read_csv("book_features_v2.csv")
-    df_book = pd.read_csv("books.csv")
-    df_rating = pd.read_csv("ratings.csv")
-    df_user_features = pd.read_csv("user_features_v2.csv")
+    book_features_v2 = pd.read_csv("C:/duong/github/console_app/src/main/dist/book_features_v2.csv")
+    df_book = pd.read_csv("C:/duong/github/console_app/src/main/dist/books.csv")
+    df_rating = pd.read_csv("C:/duong/github/console_app/src/main/dist/ratings.csv")
+    df_user_features = pd.read_csv("C:/duong/github/console_app/src/main/dist/user_features_v2.csv")
    
     input_data = json.loads(sys.argv[1])
     output = extract_user_features(input_data)
