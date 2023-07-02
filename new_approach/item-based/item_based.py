@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_distances
+import time
 
 books = pd.read_csv('../../dataset/processed_dataset/books.csv')
 ratings = pd.read_csv('../../dataset/processed_dataset/ratings.csv')
@@ -34,8 +35,16 @@ def item_based_recommendation(book_id, book_features, top_n=10):
 
     return top_books
 
-book_id = '0393037355'  # Book ID của quyển sách đang xét
+def main(book_id):
+    book_features = extract_book_features(books, ratings)
+    top_books = item_based_recommendation(book_id, book_features, top_n=10)
+    print(top_books)
+        
+start_time = time.time()
 
-book_features = extract_book_features(books, ratings)
-top_books = item_based_recommendation(book_id, book_features, top_n=10)
-print(top_books)
+book_id = '0393037355'  # Book ID của quyển sách đang xét
+main(book_id)
+
+end_time = time.time()
+execution_time = end_time - start_time
+print("Thời gian thực thi:", execution_time, "giây")
