@@ -7,9 +7,6 @@ import platform
 
 start_time = time.time()
 tracemalloc.start()
-architecture = platform.architecture()[0]
-
-print(f"Python is running as {architecture}-bit")
 
 # ratings = pd.read_csv('../../dataset/processed_dataset/ratings.csv', dtype={'book-rating': 'int8', 'user-id': 'int16'})
 
@@ -48,14 +45,3 @@ similarities = cosine_similarity(target_column.values.reshape(1, -1), other_colu
 # end_time = time.time()
 # execution_time = end_time - start_time
 # print("Thời gian thực thi:", execution_time, "giây")
-
-snapshot = tracemalloc.take_snapshot()
-
-# Lấy thông tin về việc sử dụng bộ nhớ
-top_stats = snapshot.statistics('lineno')
-
-# Tính tổng dung lượng bộ nhớ
-total_memory = sum(stat.size for stat in top_stats)
-
-# In ra tổng dung lượng bộ nhớ
-print(f'Total memory usage: {total_memory} bytes')

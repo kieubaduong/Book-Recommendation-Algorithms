@@ -17,7 +17,7 @@ book_features_v2['feature'] = book_features_v2['feature'].apply(convert_to_vecto
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
-default_features = np.zeros((768,))
+default_features = np.zeros((768, -1))
 
 def extract_features(book_info, rating):
     isbn = book_info['isbn'].values[0]
