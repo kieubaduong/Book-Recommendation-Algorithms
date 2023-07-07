@@ -4,6 +4,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import precision_score, recall_score
+from collections import Counter
 
 def convert_to_vector(x):
     x = x.strip().rstrip("\\n")
@@ -14,12 +15,12 @@ def get_users_with_rating(isbn, rating_dataset):
     users_with_rating = rating_dataset.loc[rating_dataset['isbn'] == isbn, 'user-id']
     return users_with_rating
 
-def predict_rating(user_id, isbn, rating_dataset, user_features_v2):
+def predict_rating(user_id, isbn, rating_dataset, user_features_v2, most_common_rating):
     users_with_rating = get_users_with_rating(isbn, rating_dataset)
     user_features = user_features_v2.loc[user_features_v2['user-id'].isin(users_with_rating), 'feature'].apply(convert_to_vector)
 
     if user_features.empty:
-        return 3
+        return most_common_rating
 
     input_user_features = convert_to_vector(user_features_v2.loc[user_features_v2['user-id'] == user_id, 'feature'].values[0])
     user_features_array = np.vstack(user_features.values)
@@ -40,7 +41,9 @@ def main():
     rating_dataset = pd.read_csv("/content/drive/MyDrive/dataset/ratings.csv")
     user_features_v2 = pd.read_csv("/content/drive/MyDrive/dataset/featured/user_features_v2.csv")
 
-    # rating_dataset = rating_dataset.head(50)
+    ratings = rating_dataset['book-rating'].values
+    rating_counts = Counter(ratings)
+    most_common_rating = rating_counts.most_common(1)[0][0]
 
     recalls = []
     precisions = []
@@ -54,7 +57,7 @@ def main():
             user_id = row['user-id']
             isbn = row['isbn']
             true_rating = row['book-rating']
-            predicted_rating = predict_rating(user_id, isbn, train_data, user_features_v2)
+            predicted_rating = predict_rating(user_id, isbn, train_data, user_features_v2, most_common_rating)
             true_ratings.append(true_rating)
             predicted_ratings.append(predicted_rating)
 
