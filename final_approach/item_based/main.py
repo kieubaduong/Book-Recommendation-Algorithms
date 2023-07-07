@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.metrics import recall_score, precision_score
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
+from collections import Counter
 
 def calculate_weighted_average_rating(cosine_distances, user_ratings):
     distances = cosine_distances
@@ -12,12 +13,12 @@ def calculate_weighted_average_rating(cosine_distances, user_ratings):
     final_rating = max(1, min(rounded_rating, 5))
     return final_rating
 
-def predictRating(pivot_table, user_id, isbn, rating_dataset):
+def predictRating(pivot_table, user_id, isbn, rating_dataset, most_common_rating):
     other_ratings = rating_dataset[(rating_dataset['user-id'] == user_id) & (rating_dataset['isbn'] != isbn)]
     other_ratings = other_ratings.set_index('isbn')['book-rating']
 
     if other_ratings.empty:
-        return 3
+        return most_common_rating
 
     target_column = pivot_table[isbn]
     other_columns = pivot_table.drop(columns=isbn)
@@ -37,7 +38,9 @@ def predictRating(pivot_table, user_id, isbn, rating_dataset):
 
 def main():
     rating_dataset = pd.read_csv("/content/drive/MyDrive/dataset/ratings.csv")
-    # rating_dataset = rating_dataset.head(50)
+    ratings = rating_dataset['book-rating'].values
+    rating_counts = Counter(ratings)
+    most_common_rating = rating_counts.most_common(1)[0][0]
 
     pivot_table = rating_dataset.pivot_table(index="user-id", columns="isbn", values="book-rating", fill_value=-1).astype(np.int8)
 
@@ -49,7 +52,7 @@ def main():
         for _, row in test_data.iterrows():
             user_id = row['user-id']
             isbn = row['isbn']
-            predicted_rating = predictRating(pivot_table, user_id, isbn, train_data)
+            predicted_rating = predictRating(pivot_table, user_id, isbn, train_data, most_common_rating)
             predicted_ratings.append(predicted_rating)
         true_ratings = test_data['book-rating'].tolist()
 
