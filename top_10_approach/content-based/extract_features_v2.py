@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 import csv
 import os
 
-df_books = pd.read_csv("/content/drive/MyDrive/Dataset/processed/books.csv")
+df_books = pd.read_csv("../../dataset/processed_dataset/books.csv")
 
 weights = {
     'title': 1.0,
@@ -70,23 +70,27 @@ def extract_features(isbn):
     combined_features = np.concatenate((title_features, author_features, year_features, publisher_features, tags_features, description_features, genres_features))
     return combined_features
 
-output_path = "/content/drive/MyDrive/Dataset/featured/book_features_v2.csv"
+print(df_books[df_books['isbn'] == '0192126040'].iloc[0])
+print(extract_features('0192126040'))
+print(extract_features('0192126040').shape)
 
-existing_isbns = set()
+# output_path = "/content/drive/MyDrive/Dataset/featured/book_features_v2.csv"
 
-if os.path.exists(output_path):
-    with open(output_path, 'r') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        next(reader)  # Skip header row
-        for row in reader:
-            existing_isbns.add(row[0])
+# existing_isbns = set()
 
-with open(output_path, 'a', newline='') as csvfile:
-    writer = csv.writer(csvfile, delimiter=',')
-    if csvfile.tell() == 0:
-        writer.writerow(['isbn', 'feature'])
-    for isbn in df_books['isbn']:
-        if isbn in existing_isbns:
-            continue
-        features = extract_features(isbn)
-        writer.writerow([isbn, features])
+# if os.path.exists(output_path):
+#     with open(output_path, 'r') as csvfile:
+#         reader = csv.reader(csvfile, delimiter=',')
+#         next(reader)  # Skip header row
+#         for row in reader:
+#             existing_isbns.add(row[0])
+
+# with open(output_path, 'a', newline='') as csvfile:
+#     writer = csv.writer(csvfile, delimiter=',')
+#     if csvfile.tell() == 0:
+#         writer.writerow(['isbn', 'feature'])
+#     for isbn in df_books['isbn']:
+#         if isbn in existing_isbns:
+#             continue
+#         features = extract_features(isbn)
+#         writer.writerow([isbn, features])
