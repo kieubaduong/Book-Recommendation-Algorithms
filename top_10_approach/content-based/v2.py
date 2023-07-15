@@ -85,8 +85,14 @@ knn_model.fit(book_features)
 
 sample_features = extract_features('0192126040')
 
-distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
+print(book_features.shape())
 
-for index in indices[0][1:]:
-    book_info = df_books_subset.iloc[index]
-    print(book_info['isbn'])
+# print(sample_features)
+
+# print(knn_model.kneighbors(sample_features.reshape(1, -1)))
+
+# distances, indices = knn_model.kneighbors(sample_features.reshape(1, -1))
+
+# for index in indices[0][1:]:
+#     book_info = df_books_subset.iloc[index]
+#     print(book_info['isbn'])

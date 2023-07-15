@@ -28,6 +28,8 @@ def item_based_recommendation(book_id, book_features, top_n=10):
 
     # Tính khoảng cách cosine giữa vector rating của sách đang xét và các sách khác
     distances = cosine_distances([ratings_vector], book_features)[0]
+    
+    print(distances)
 
     # Lấy ra top N quyển sách gần nhất (không chứa sách đang xét)
     top_indices = np.argsort(distances)[1:top_n+1]
@@ -36,15 +38,17 @@ def item_based_recommendation(book_id, book_features, top_n=10):
     return top_books
 
 def main(book_id):
+    # books = books.head(1)
     book_features = extract_book_features(books, ratings)
+    # print(book_features)
     top_books = item_based_recommendation(book_id, book_features, top_n=10)
     print(top_books)
-        
-start_time = time.time()
 
-book_id = '0393037355'  # Book ID của quyển sách đang xét
+# start_time = time.time()
+
+book_id = '0762412119'  # Book ID của quyển sách đang xét
 main(book_id)
 
-end_time = time.time()
-execution_time = end_time - start_time
-print("Thời gian thực thi:", execution_time, "giây")
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print("Thời gian thực thi:", execution_time, "giây")
