@@ -1,6 +1,6 @@
 # **Book Recommendation Algorithm**
 
-This is the recommendation algorithm used for the [Boka](https://github.com/kieubaduong/Boka) application - a book reading application.
+This is the recommendation algorithm used for the [Boka](https://github.com/kieubaduong/Boka) - a book reading application.
 ## **Instructor**
 
 - **Instructor:** Nguyen Tan Toan
