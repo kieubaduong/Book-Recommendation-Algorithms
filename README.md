@@ -36,6 +36,10 @@ This is the recommendation algorithm used for the [Boka](https://github.com/kieu
 - **src**: Contains models applying three popular algorithms, including content-based and collaborative filtering.
 - **evaluate-precision**: Contains models modifying the input and output of algorithms in the **`src`** directory to evaluate the accuracy of each algorithm.
 
+## **Google Colab Notebook**
+
+You can find the Google Colab notebook for this project [here](https://drive.google.com/drive/folders/17nWzjQ0EDQM8JXHJQQ77ASAmPgYDcq7b?usp=sharing)
+
 <table>
   <tr>
     <td align="center">
