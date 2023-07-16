@@ -1,0 +1,6 @@
+[submodule "mobile"]
+	path = mobile
+	url = https://github.com/kieubaduong/Boka
+[submodule "backend"]
+	path = backend
+	url = https://github.com/ddatdt12/rseeshop-api
