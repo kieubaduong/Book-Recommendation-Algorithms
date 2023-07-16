@@ -43,19 +43,27 @@ You can find the Google Colab notebook for this project [here](https://drive.goo
 <table>
   <tr>
     <td align="center">
+      <a href="https://github.com/kieubaduong">
         <img src="https://avatars.githubusercontent.com/u/75083331?v=4" width="100px;" alt=""/>
-                <br />
-                <sub><b>Kieu Ba Duong</b></sub>
-                </a><br />
-                <sub>Mobile developer</sub>
-                <br />
-                <sub>ML reseacher</sub>
-    <td align="center"><img src="https://avatars.githubusercontent.com/u/75603028?v=4" width="100px;" alt=""/><br />
-                <sub><b>Do Thanh Dat</b></sub>
-                </a><br />
-                <sub>Backend developer</sub>
-                <br />
-                <sub>Project manager</sub>
+      </a>
+      <br />
+      <sub><b>Kieu Ba Duong</b></sub>
+      <br />
+      <sub>Mobile developer</sub>
+      <br />
+      <sub>ML researcher</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ddatdt12">
+        <img src="https://avatars.githubusercontent.com/u/75603028?v=4" width="100px;" alt=""/>
+      </a>
+      <br />
+      <sub><b>Do Thanh Dat</b></sub>
+      <br />
+      <sub>Backend developer</sub>
+      <br />
+      <sub>Project manager</sub>
+    </td>
   </tr>
-  
 </table>
+
