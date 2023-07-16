@@ -8,6 +8,7 @@ This is the recommendation algorithm used for the [Boka](https://github.com/kieu
 ## **Project Directory Structure**
 
 ```
+
 ├── archive
 │   ├── crawled_dataset
 │   ├── processed_dataset
