@@ -38,6 +38,8 @@ def predictRating(pivot_table, user_id, isbn, rating_dataset, most_common_rating
 
 def main():
     rating_dataset = pd.read_csv("/content/drive/MyDrive/dataset/ratings.csv")
+    rating_dataset = rating_dataset.head(1000)
+
     ratings = rating_dataset['book-rating'].values
     rating_counts = Counter(ratings)
     most_common_rating = rating_counts.most_common(1)[0][0]

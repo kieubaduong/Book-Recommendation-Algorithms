@@ -61,9 +61,9 @@ def main():
             true_ratings.append(true_rating)
             predicted_ratings.append(predicted_rating)
 
-        precision = precision_score(true_ratings, predicted_ratings, average='micro')
+        precision = precision_score(true_ratings, predicted_ratings, average='weighted', zero_division=1)
         precisions.append(precision)
-        recall = recall_score(true_ratings, predicted_ratings, average='micro')
+        recall = recall_score(true_ratings, predicted_ratings, average='weighted', zero_division=1)
         recalls.append(recall)
 
     average_precision = np.mean(precisions)

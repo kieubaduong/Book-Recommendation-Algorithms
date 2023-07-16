@@ -40,7 +40,7 @@ def predictRatingKMeans(pivot_table, user_id, isbn, rating_dataset, most_common_
 
     other_columns_array = other_columns_valid.values
 
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters)
     cluster_labels = kmeans.fit_predict(other_columns_array)
 
     target_cluster_label = kmeans.predict(target_column_valid.values.reshape(1, -1))[0]
@@ -54,8 +54,7 @@ def predictRatingKMeans(pivot_table, user_id, isbn, rating_dataset, most_common_
     return calculate_weighted_average_rating(cosine_distances, ratings)
 
 def main():
-    rating_dataset = pd.read_csv("ratings.csv")
-    rating_dataset = rating_dataset.head(100)
+    rating_dataset = pd.read_csv("/content/drive/MyDrive/dataset/ratings.csv")
 
     ratings = rating_dataset['book-rating'].values
     rating_counts = Counter(ratings)
