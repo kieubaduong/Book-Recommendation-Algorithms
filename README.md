@@ -26,7 +26,6 @@ This is the recommendation algorithm used for the [Boka](https://github.com/kieu
 │   └── user-based
 ├── test
 └── traditional-approach
-
 ```
 
 ## **Directory Description**
