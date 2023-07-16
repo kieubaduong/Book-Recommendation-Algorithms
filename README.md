@@ -38,7 +38,7 @@ This is the recommendation algorithm used for the [Boka](https://github.com/kieu
 
 ## **Google Colab Notebook**
 
-You can find the Google Colab notebook for this project [here](https://drive.google.com/drive/folders/17nWzjQ0EDQM8JXHJQQ77ASAmPgYDcq7b?usp=sharing)
+You can find the Google Colab notebook and dataset for this project [here](https://drive.google.com/drive/folders/17nWzjQ0EDQM8JXHJQQ77ASAmPgYDcq7b?usp=sharing)
 
 <table>
   <tr>
